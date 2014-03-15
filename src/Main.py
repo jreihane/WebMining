@@ -5,47 +5,24 @@ Created on Mar 13, 2014
 '''
 from __future__ import division
 import csv
+from DataPreparator import create_structure
+from Validation import corss_validation
 
 # read file
 csv_file = open('car.csv', 'r')
 data_reader = csv.reader(csv_file)
 headers = csv_file.next();
 # remove last two: the class and '\n'
-headers = headers[:len(headers) - 2]
+headers = headers.split(',')
+headers = headers[:len(headers) - 1]
 
-classes = []
-class_percentages = {}
-
-for row in data_reader:
-    # determine classes
-    cls = row[len(row) - 1]
-    classes.append(cls)
-    # end of finding classes
-
-# now calculate the percentage of each class
-for cls in classes:
-    class_percentages.update({cls : {'percentage' : ((classes.count(cls)/len(classes))*100), 'total_count': classes.count(cls)} })
-
-
-# back to beginning of the file
-csv_file.seek(0)
-
-for row in data_reader:
-    for cls in class_percentages.keys():
-        if row[len(row) - 1] == cls:
-            
-            for ind, header in enumerate(headers):
-                count_attr = 1
-                if class_percentages[cls].has_key(header):
-                    if class_percentages[cls][header].has_key(row[ind//2]):
-                        count_attr = int(class_percentages[cls][header][row[ind//2]]) + 1
-
-                    h = {row[ind//2] : count_attr}
-                    class_percentages[cls][header].update(h)
-                else:
-                    class_percentages[cls].update({header: {}})
-# print 'We have ' + str(len(classes)) + ' classes'
+class_percentages = create_structure(csv_file, data_reader, headers)
 print class_percentages
+
+csv_file.seek(0)
+corss_validation(data_reader, 10, class_percentages, csv_file, headers)
+# print 'We have ' + str(len(classes)) + ' classes'
+
 
 '''
 last test result
