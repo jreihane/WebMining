@@ -5,7 +5,7 @@ Created on Mar 15, 2014
 '''
 from __future__ import division
 from Util import TOTAL_SIZE_LABEL
-from NaiveClassifier import train
+from NaiveClassifier import train, test_net, calc_precision_recall
 
 def corss_validation(rows, size, classes, K, csv_file, headers):
     dividi = size // K #rows[TOTAL_SIZE_LABEL] // K
@@ -13,7 +13,7 @@ def corss_validation(rows, size, classes, K, csv_file, headers):
     
     
     # for each fold K
-    for k in range(1,K+2):
+    for k in range(1,2):
 #         csv_file.seek(0)
 #         
 #         print k
@@ -39,16 +39,21 @@ def corss_validation(rows, size, classes, K, csv_file, headers):
         if k == 1:
             test_data = rows[1:dividi]
             train_data = rows[dividi:]
-            print 'len test:'
-            print len(test_data)
-            print 'len train:'
-            print len(train_data)
+#             print 'len test:'
+#             print len(test_data)
+#             print 'len train:'
+#             print len(train_data)
         else:
             test_data = rows[k * dividi: ((k+1) * dividi)]
             # data before test data and after it
             train_data = rows[1:(k * dividi)] + rows[((k+1) * dividi):]
         
-        train(train_data, classes, headers)
+        probs = train(train_data, classes, headers)
+        test_data = test_net(test_data, classes, headers, probs)
+        print test_data
+        
+        test_precision = calc_precision_recall(test_data, probs)
+        print test_precision
 #         print '-------------------------------------------'
 #         print 'test data: '
 #         print test_data
