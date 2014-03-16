@@ -27,7 +27,7 @@ def train(train_data, classes, headers):
         # compute p(class)
         cls_prob = cls_dic[TOTAL_CLASS_LABEL] / len(train_data)
         probabilities[cls].update({CLASS_PROBABILITY: cls_prob, TOTAL_CLASS_LABEL: cls_dic[TOTAL_CLASS_LABEL]})
-        print 'probability of ' + cls + ' is: ' + str(cls_prob)
+#         print 'probability of ' + cls + ' is: ' + str(cls_prob)
         
         for header in headers:
             attrs = cls_dic[header]
@@ -38,7 +38,7 @@ def train(train_data, classes, headers):
                 probabilities[cls].update({name: (attrs[attr] / cls_dic[TOTAL_CLASS_LABEL]) * pow(10,2)})
                 
             
-    print probabilities
+#     print probabilities
     return probabilities
 
 '''
@@ -47,29 +47,28 @@ def train(train_data, classes, headers):
 def test_net(test_data, classes, headers, probabilities):
     test_probabilities = {}
     
-    print fl_info
+#     print fl_info
     for row in test_data:
         prob_value = 1
         for cls in probabilities.keys():
-            print '----------------------------------------------------------'
+#             print '----------------------------------------------------------'
             if cls != CLASS_PROBABILITY:
                 for index, header in enumerate(headers):
                     name = header + '_' + row[index]
 #                     print row[index] , name
                     if probabilities[cls].has_key(name):
                         prob_value *= probabilities[cls][name]
-#                         print str(cls) + ' ' + name + ' ' + str(probabilities[cls][name])
+
                     else:
-#                         if row[index] == :
-                            print 'does not have ' + name
+#                             print 'does not have ' + name
                             prob_value *= 0.1 * (pow(10, -15))
                 # compute p(X|class)*p(class) = p(class|X)
                 prob_value *= probabilities[cls][CLASS_PROBABILITY]
                 test_probabilities.update({cls: prob_value})
                 
-        print '**********************************************************************'
-        print test_probabilities
-        print '**********************************************************************'
+#         print '----------------------------------------------------------------------'
+#         print test_probabilities
+#         print '----------------------------------------------------------------------'
         # maximum value of classes is selected as train data class
         max_v = find_max(test_probabilities)
         row.append(max_v)
@@ -78,7 +77,7 @@ def test_net(test_data, classes, headers, probabilities):
 
 
 def calc_precision_recall(test_data, probabilities):
-    test_precision = 0
+    test_precision = 1
     test_recall = {}
     true_positive = {}
     
@@ -101,16 +100,15 @@ def calc_precision_recall(test_data, probabilities):
             incorrect_values += 1
              
     for cls in true_positive.keys():
-        print '""""""""""""""""""""""""""""""""'
-        print correct_values, true_positive[cls]
-        print '""""""""""""""""""""""""""""""""'
+#         print '""""""""""""""""""""""""""""""""'
+#         print correct_values, true_positive[cls]
+#         print '""""""""""""""""""""""""""""""""'
         test_recall_count = correct_values / true_positive[cls]
         test_recall.update({cls: test_recall_count})
     
-    test_precision = correct_values / len(test_data)
+    if len(test_data) > 0:
+        test_precision = correct_values / len(test_data)
     
-    print test_precision
-    print test_recall
     return [test_precision, test_recall]
 
 
