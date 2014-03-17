@@ -6,7 +6,7 @@ Created on Mar 13, 2014
 from __future__ import division
 import csv
 from DataPreparator import retrieve_rows
-from Validation import corss_validation
+from Validation import cross_validation
 '''
 1) get an array of rows
 2) for 10 times (10-fold) break the row array into two parts: 172 items for testing and the rest for training
@@ -29,6 +29,6 @@ headers = headers[:len(headers) - 1]
 strctured_value = retrieve_rows(csv_file, data_reader, headers)
 
 csv_file.seek(0)
-corss_validation(strctured_value[1], strctured_value[0], strctured_value[2], 10, csv_file, headers)
+cross_validation(strctured_value[1], strctured_value[0], strctured_value[2], 10, csv_file, headers)
 
 
